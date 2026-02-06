@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Sistema de Tickets')</title>3
+    <title>{{ $title ?? 'Sistema de Tickets' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
@@ -14,9 +14,11 @@
     <div class="main-content-wrapper">
         <div class="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <div class="max-w-7xl mx-auto">
-                @yield('content')
+                {{ $slot }}
             </div>
         </div>
-    </div>   
+    </div>
+    
+    @livewireScripts
 </body>
 </html>
