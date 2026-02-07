@@ -14,7 +14,27 @@
 
     <livewire:components.search-bar placeholder="Buscar categoría..." />
 
-    <livewire:components.data-table :columns="$columns" :data="$data" />
+    <livewire:components.data-table 
+    :columns="$columns" 
+    :data="$data" 
+    :key="'table-' . $perPage . '-' . $search . '-' . $this->getPage()" />
+
+    <div class="mt-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-700">Mostrar:</label>
+            <select wire:model.live="perPage" class="border border-gray-300 rounded px-2 py-1 text-sm">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+            <span class="text-sm text-gray-700">
+                registros (Total: {{ $totalRegistros }})
+            </span>
+        </div>
+        
+        {{ $paginator->links() }}
+    </div>
 
     @if($showModal)
         <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">

@@ -3,16 +3,12 @@
 namespace App\Livewire\Components;
 
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class DataTable extends Component
 {
-    use WithPagination;
-
     public $columns = [];
     public $data = [];
     public $actions = true;
-    public $perPage = 10;
 
     public function render()
     {

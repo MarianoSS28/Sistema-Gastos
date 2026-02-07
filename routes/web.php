@@ -15,6 +15,7 @@ Route::get('/ProductossMantenimiento', [ProductoController::class, 'index'])->na
 Route::get('/ProductossMantenimiento', [ProductoController::class, 'index'])->name('producto');
 
 comando para crear un componente
-php artisan make:livewire Mantenimiento/
+php artisan make:livewire EstadoMantenimiento
+php artisan make:livewire MetodoPAgoMantenimiento
 php artisan make:model Categoria
 */

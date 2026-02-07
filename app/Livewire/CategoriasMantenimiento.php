@@ -3,11 +3,17 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
 
 class CategoriasMantenimiento extends Component
 {
+    use WithPagination;
+    
+    public $perPage = 10;
+    public $totalRegistros = 0;
+
     public $search = '';
     public $showModal = false;
     
@@ -106,8 +112,13 @@ class CategoriasMantenimiento extends Component
 
     public function render()
     {
-        $categorias = DB::select('EXEC sp_CrudCategorias @accion = ?, @idUsuario = ?, @nombre = ?, @estado = ?', 
-            [1, $this->idUsuario, $this->search ?: null, null]);
+        $paginaActual = $this->getPage();
+        
+        $categorias = DB::select('EXEC sp_CrudCategorias @accion = ?, @idUsuario = ?, @nombre = ?, @estado = ?, @paginaActual = ?, @cantidadPorPagina = ?', 
+            [1, $this->idUsuario, $this->search ?: null, null, $paginaActual, $this->perPage]);
+
+        // Obtener total de registros del primer resultado
+        $this->totalRegistros = !empty($categorias) ? $categorias[0]->TotalRegistros : 0;
 
         $data = array_map(function($cat) {
             return [
@@ -127,9 +138,30 @@ class CategoriasMantenimiento extends Component
             ['field' => 'estado', 'label' => 'Estado'],
         ];
 
+        // Crear un LengthAwarePaginator manualmente
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $data,
+            $this->totalRegistros,
+            $this->perPage,
+            $paginaActual,
+            ['path' => request()->url(), 'pageName' => 'page']
+        );
+
         return view('livewire.categorias-mantenimiento', [
             'columns' => $columns,
-            'data' => $data
-        ])->layout('layouts.app');  // ← Agregar esta parte
+            'data' => $data,
+            'paginator' => $paginator,
+            'totalRegistros' => $this->totalRegistros
+        ])->layout('layouts.app');
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 }
