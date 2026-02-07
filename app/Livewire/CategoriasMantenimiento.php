@@ -27,6 +27,15 @@ class CategoriasMantenimiento extends Component
     
     public $isEdit = false;
 
+    public $showDeleteModal = false;
+    public $deleteId = null;
+
+    protected $listeners = [
+        '$refresh',
+        'confirm-delete' => 'delete',
+        'cancel-delete' => 'cancelDelete'
+    ];
+
     protected $rules = [
         'idUsuario' => 'required|integer',
         'nombre' => 'required|string|max:100',
@@ -61,12 +70,27 @@ class CategoriasMantenimiento extends Component
     }
 
     #[On('delete-record')]
-    public function delete($id)
+    public function confirmDelete($id)
+    {
+        $this->deleteId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function delete()
     {
         DB::statement('EXEC sp_CrudCategorias @accion = ?, @idCategoria = ?, @usuario_modificacion = ?', 
-            [4, $id, 'admin']);
+            [4, $this->deleteId, 'admin']);
         
         session()->flash('message', 'Categoría eliminada correctamente');
+        $this->showDeleteModal = false;
+        $this->deleteId = null;
+        return redirect()->to('/categorias');
+    }
+
+    public function cancelDelete()
+    {
+        $this->showDeleteModal = false;
+        $this->deleteId = null;
     }
 
     public function create()
@@ -93,6 +117,7 @@ class CategoriasMantenimiento extends Component
         }
 
         $this->closeModal();
+        return redirect()->to('/categorias');
     }
 
     public function closeModal()

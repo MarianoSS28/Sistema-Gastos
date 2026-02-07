@@ -40,8 +40,7 @@
                                 Editar
                             </button>
                             <button wire:click="delete({{ $row['id'] }})" 
-                                    class="text-red-600 hover:text-red-900"
-                                    onclick="return confirm('¿Está seguro de eliminar este registro?')">
+                                    class="text-red-600 hover:text-red-900">
                                 Eliminar
                             </button>
                         </td>
